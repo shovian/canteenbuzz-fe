@@ -1,4 +1,5 @@
 "use client";
+import { isPenjualAvailable } from "@/app/(Controls)/KantinHandler/handler";
 import { ReactElement, useEffect, useState } from "react";
 const HalamanLogin = () => {
   const [errorElement, setErrorElement] = useState<ReactElement | undefined>();
@@ -18,6 +19,9 @@ const HalamanLogin = () => {
   };
   const handleLogin = (username: String, password: String) => {
     if (isFormComplete(username, password)) {
+      isPenjualAvailable(username, password).then((res) => {
+        console.log(res);
+      });
     } else {
       createErrorElement("username dan/atau password tidak boleh kosong");
     }

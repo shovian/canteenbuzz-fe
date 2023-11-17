@@ -1,5 +1,6 @@
-export function isPenjualAvailable(username: String, password: String) {
-  const penjual = kantin.getPenjualByCredentials(username, password);
-  if (penjual !== undefined) return true;
-  else return false;
+import { getPenjualByCredentials } from "@/app/(Entities)/Kantin/entity";
+
+export async function isPenjualAvailable(username: String, password: String) {
+  const penjual = await getPenjualByCredentials(username, password);
+  return penjual === true;
 }
