@@ -16,6 +16,10 @@
 # production
 /build
 
+# temp
+
+/app/(Boundaries)
+
 # misc
 .DS_Store
 *.pem

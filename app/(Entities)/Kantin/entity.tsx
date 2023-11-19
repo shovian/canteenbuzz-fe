@@ -3,6 +3,10 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
   collection,
+  query, 
+  where,
+  orderBy,
+  limit,
   doc,
   getDoc,
   getDocs,
@@ -28,10 +32,19 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-type Kantin = {
-  penjuals: Penjual[];
-  getPenjualByCredentials: (username: String, password: String) => Penjual;
-};
+// type Kantin = {
+//   penjuals: Penjual[];
+//   getPenjualByCredentials: (username: String, password: String) => Penjual;
+// };
+
+export async function getKantin(
+  penjualId: String
+) {
+  var res = false;
+  const docSnap = collection(db, "kantin");
+  const kantin = getDocs(query(docSnap, where("penjualId", "==", penjualId)));
+  return kantin;
+}
 
 export async function getPenjualByCredentials(
   username: String,
@@ -44,4 +57,14 @@ export async function getPenjualByCredentials(
       res = true;
   });
   return res;
+}
+
+export async function getPenjualByCode(
+  code: String
+) {
+  var res = false;
+  const docSnap = collection(db, "penjual");
+  const penjual = getDocs( query(docSnap, where("code", "==", code)));
+  
+  return penjual;
 }
