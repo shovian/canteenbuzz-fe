@@ -1,7 +1,13 @@
 "use client";
-import { isPenjualAvailable } from "@/app/(Controls)/KantinHandler/handler";
+
+import {
+  isPenjualAvailable,
+  redirectMainPage,
+} from "@/app/(Controls)/KantinHandler/handler";
+import { useRouter } from "next/navigation";
 import { ReactElement, useEffect, useState } from "react";
 const HalamanLogin = () => {
+  const router = useRouter();
   const [errorElement, setErrorElement] = useState<ReactElement | undefined>();
   const [username, setUsername] = useState(" ");
   const [password, setPassword] = useState(" ");
@@ -20,14 +26,16 @@ const HalamanLogin = () => {
   const handleLogin = (username: String, password: String) => {
     if (isFormComplete(username, password)) {
       isPenjualAvailable(username, password).then((res) => {
-        console.log(res);
+        if (res === true) {
+          redirectMainPage(router);
+        }
       });
     } else {
       createErrorElement("username dan/atau password tidak boleh kosong");
     }
   };
   return (
-    <div className="z-10 h-screen w-screen flex flex-col justify-center items-center lg:bg-red-500">
+    <div className="z-10 h-screen w-screen flex flex-col justify-center items-center ">
       <div className="">
         <h1>Login</h1>
       </div>
