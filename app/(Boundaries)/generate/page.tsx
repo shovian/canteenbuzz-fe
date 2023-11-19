@@ -1,45 +1,72 @@
 "use client";
-import { isPenjualAvailable } from "@/app/(Controls)/KantinHandler/handler";
+import {
+  convertToFile,
+  generateQRURL,
+} from "@/app/(Controls)/PenjualHandler/handler";
 import { ReactElement, useEffect, useState } from "react";
-const HalamanLogin = () => {
-  const [errorElement, setErrorElement] = useState<ReactElement | undefined>();
-  const [username, setUsername] = useState(" ");
-  const [password, setPassword] = useState(" ");
+function HalamanGenerasiURLdanQRcode() {
+  const [isNamaKiosInputted, setIsNamaKiosInputted] = useState<boolean>(false);
+  const [URL, setURL] = useState<String>("");
+  const [image, setImage] = useState<HTMLImageElement>();
+  const onPressGenerate = (kios: String) => {
+    const code = kios;
+    const generatedData = generateQRURL(code);
+    // setURL(generatedURL.url);
+    setURL(generatedData.data.URL);
+    setImage(generatedData.data.QR);
+  };
   useEffect(() => {
-    handleLogin(username, password);
-  }, [username, password]);
+    setIsNamaKiosInputted(true);
+    // const generatedQR = new Image();
+    // generatedQR.src = URL as string;
+    // setImage(generatedQR);
+  }, [URL]);
   useEffect(() => {
-    setErrorElement(undefined);
+    setIsNamaKiosInputted(false);
   }, []);
-  const isFormComplete = (username: String, password: String) => {
-    return username !== "" && password !== "";
-  };
   const createErrorElement = (message: String) => {
-    setErrorElement(<div>{message}</div>);
+    const page: ReactElement = <div>{message}</div>;
+    return page;
   };
-  const handleLogin = (username: String, password: String) => {
-    if (isFormComplete(username, password)) {
-      isPenjualAvailable(username, password).then((res) => {
-        console.log(res);
-      });
-    } else {
-      createErrorElement("username dan/atau password tidak boleh kosong");
-    }
+  const downloadQR = (fileType: String) => {
+    const fileURL = convertToFile(image ? image : new Image());
+    return fileURL;
   };
   return (
-<div className="HalamanGenerasiUrlDanQrcode w-96 h-96 bg-white rounded-3xl">
-  <div className="Frame68 h-32 px-16 left-0 top-[44px] absolute bg-sky-700 justify-center items-center inline-flex">
-    <div className="Frame69 self-stretch justify-start items-center gap-2.5 inline-flex">
-      <div className="H1 w-64 text-center text-neutral-50 text-xl font-semibold font-poppins leading-none">Generate QR + URL</div>
+    <div className="h-screen w-screen ">
+      <div className="h-1/4 bg-sky-800 flex flex-col items-center justify-center text-white">
+        <div>Generate QR + URL</div>
+      </div>
+      {isNamaKiosInputted ? (
+        <div className="h-3/4 white flex flex-col items-center justify-center">
+          {image && <img width={80} height={80} src={image.src}></img>}
+          <input value={URL as string} readOnly></input>
+          <div>
+            {image && (
+              <button>
+                <a href={downloadQR("gif")} download>
+                  Download QR Code
+                </a>
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="h-3/4 flex flex-col items-center justify-center">
+          <form
+            onSubmit={(event: any) => {
+              event.preventDefault();
+              onPressGenerate(event.target.kios.value);
+            }}
+            className="flex flex-col"
+            action="submit"
+          >
+            <input id="kios" type="text" placeholder="masukkan nama kios" />
+            <button>Generate</button>
+          </form>
+        </div>
+      )}
     </div>
-  </div>
-  <div className="Frame203 w-80 h-11 pl-5 pr-20 pt-3.5 pb-4 left-[38px] top-[499px] absolute bg-zinc-100 rounded-2xl justify-start items-center inline-flex">
-    <div className="HttpsCBuzzXyzKantinHenny text-black text-xs font-semibold font-poppins leading-none">https://c-buzz.xyz/kantin-henny</div>
-  </div>
-  <div className="Frame202 w-80 h-12 px-20 py-3.5 left-[42px] top-[569px] absolute bg-orange-600 rounded-lg justify-center items-center inline-flex">
-    <div className="Submit text-center text-white text-base font-bold font-poppins">Download QR Code</div>
-  </div>
-</div>
   );
-};
-export default HalamanLogin;
+}
+export default HalamanGenerasiURLdanQRcode;

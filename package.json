@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "firebase": "^10.6.0",
+    "html-react-parser": "^5.0.6",
     "next": "14.0.2",
+    "nextjs-current-url": "^1.0.3",
+    "qrcode-generator": "^1.4.4",
     "react": "^18",
     "react-dom": "^18",
     "react-router-dom": "^6.19.0"
