@@ -15,7 +15,8 @@
     "nextjs-current-url": "^1.0.3",
     "qrcode-generator": "^1.4.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-router-dom": "^6.19.0"
   },
   "devDependencies": {
     "@types/node": "^20",

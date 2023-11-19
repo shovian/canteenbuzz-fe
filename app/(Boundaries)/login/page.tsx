@@ -6,11 +6,14 @@ import {
 } from "@/app/(Controls)/KantinHandler/handler";
 import { useRouter } from "next/navigation";
 import { ReactElement, useEffect, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 const HalamanLogin = () => {
   const router = useRouter();
   const [errorElement, setErrorElement] = useState<ReactElement | undefined>();
   const [username, setUsername] = useState(" ");
   const [password, setPassword] = useState(" ");
+  const navigate = useNavigate();
   useEffect(() => {
     handleLogin(username, password);
   }, [username, password]);
@@ -48,8 +51,8 @@ const HalamanLogin = () => {
           setPassword(event.target.password.value);
         }}
       >
-        <input placeholder="Username" id="username" type="text" />
-        <input placeholder="Password" id="password" type="password" />
+        <input placeholder="Username" id="username" type="text" className="w-[314px] h-[45px] pl-[19px] pr-[76px] pt-[15px] pb-4 bg-zinc-100 rounded-[20px] justify-start items-center inline-flex"/>
+        <input placeholder="Password" id="password" type="password" className="w-[314px] h-[45px] pl-[19px] pr-[76px] pt-[15px] pb-4 bg-zinc-100 rounded-[20px] justify-start items-center inline-flex" />
         <button>Masuk</button>
       </form>
       <div>{errorElement ? errorElement : ""}</div>
