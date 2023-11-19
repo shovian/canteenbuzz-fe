@@ -1,0 +1,85 @@
+.login {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.login .div {
+    background-color: #ffffff;
+    height: 844px;
+    position: relative;
+    width: 390px;
+}
+
+.login .overlap-group {
+    height: 282px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 235px;
+}
+
+.login .ellipse {
+    height: 262px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 195px;
+}
+
+.login .img {
+    height: 32px;
+    left: 156px;
+    position: absolute;
+    top: 250px;
+    width: 79px;
+}
+
+.login .ellipse-2 {
+    height: 238px;
+    left: 161px;
+    position: absolute;
+    top: 606px;
+    width: 229px;
+}
+
+.login .h {
+    height: 13px;
+    left: 117px;
+    position: absolute;
+    top: 293px;
+    width: 156px;
+}
+
+.login .h-2 {
+    height: 12px;
+    left: 98px;
+    position: absolute;
+    top: 580px;
+    width: 202px;
+}
+
+.login .frame-2 {
+    height: 18px;
+    left: 255px;
+    position: absolute;
+    top: 460px;
+    width: 92px;
+}
+
+.login .frame-3 {
+    height: 113px;
+    left: 38px;
+    position: absolute;
+    top: 339px;
+    width: 314px;
+}
+
+.login .frame-4 {
+    background-color: var(--foundationprimarydark) !important;
+    left: 58px !important;
+    position: absolute !important;
+    top: 507px !important;
+}

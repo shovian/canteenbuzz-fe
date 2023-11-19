@@ -27,20 +27,18 @@ const HalamanLogin = () => {
     }
   };
   return (
-<div className="HalamanUtamaPenjual w-96 h-96 relative bg-white rounded-3xl">
-  <div className="Frame68 px-20 py-9 left-0 top-[44px] absolute bg-sky-700 flex-col justify-center items-center gap-3 inline-flex">
-    <div className="Frame69 self-stretch justify-center items-center gap-2.5 inline-flex">
-      <div className="H1 w-40 text-center text-neutral-50 text-xl font-semibold font-poppins leading-none">Kantin Henny</div>
+<div className="HalamanGenerasiUrlDanQrcode w-96 h-96 bg-white rounded-3xl">
+  <div className="Frame68 h-32 px-16 left-0 top-[44px] absolute bg-sky-700 justify-center items-center inline-flex">
+    <div className="Frame69 self-stretch justify-start items-center gap-2.5 inline-flex">
+      <div className="H1 w-64 text-center text-neutral-50 text-xl font-semibold font-poppins leading-none">Generate QR + URL</div>
     </div>
-    <div className="JumlahAntrian12 text-center text-orange-200 text-2xl font-bold font-poppins leading-7">Jumlah Antrian: 12</div>
   </div>
-  <div className="Frame202 w-80 h-12 px-14 py-3.5 left-[44px] top-[363px] absolute bg-orange-600 rounded-lg justify-center items-center inline-flex">
-    <div className="Submit text-center text-white text-base font-bold font-poppins">Generate URL + QR Code</div>
+  <div className="Frame203 w-80 h-11 pl-5 pr-20 pt-3.5 pb-4 left-[38px] top-[499px] absolute bg-zinc-100 rounded-2xl justify-start items-center inline-flex">
+    <div className="HttpsCBuzzXyzKantinHenny text-black text-xs font-semibold font-poppins leading-none">https://c-buzz.xyz/kantin-henny</div>
   </div>
-  <div className="Frame202 w-80 h-12 px-14 py-3.5 left-[42px] top-[433px] absolute bg-orange-600 rounded-lg justify-center items-center inline-flex">
-    <div className="Submit text-center text-white text-base font-bold font-poppins">Lihat Daftar Pelanggan</div>
+  <div className="Frame202 w-80 h-12 px-20 py-3.5 left-[42px] top-[569px] absolute bg-orange-600 rounded-lg justify-center items-center inline-flex">
+    <div className="Submit text-center text-white text-base font-bold font-poppins">Download QR Code</div>
   </div>
-  
 </div>
   );
 };
