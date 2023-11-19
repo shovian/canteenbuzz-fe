@@ -1,16 +1,25 @@
 "use client";
-import { useParams } from "next/navigation";
+import { redirectTunggu } from "@/app/(Controls)/PembeliHandler/handler";
+import { setNama } from "@/app/(Controls)/PenjualHandler/handler";
+import { useParams, useRouter } from "next/navigation";
 
 const HalamanFormPengisianNama = () => {
+  const router = useRouter();
   const id = useParams().id;
+  function submitNama(nama: String) {
+    setNama(nama);
+    redirectTunggu(router);
+  }
   return (
-    <div className="h-screen w-screen bg-red-500">
-      <div className="h-1/4 bg-green-500 flex flex-col items-center justify-center">
+    <div className="h-screen w-screen ">
+      <div className="h-1/4 bg-sky-800 text-white flex flex-col items-center justify-center">
         <div>Masukkan Namamu</div>
-        <div>Masukkan nama sesuai pesananmu ya</div>
+        <div className="text-red-200 text-sm">
+          Masukkan nama sesuai pesananmu ya
+        </div>
       </div>
-      <div className="h-3/4 bg-sky-500 flex flex-col items-center justify-center">
-        <div>masukkan nama</div>
+      <div className="h-3/4 flex flex-col items-center justify-center">
+        <input placeholder="Masukkan Nama"></input>
         <div>
           <button>Submit</button>
         </div>

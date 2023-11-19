@@ -1,5 +1,4 @@
 "use client";
-
 import {
   isPenjualAvailable,
   redirectMainPage,
@@ -12,7 +11,7 @@ const HalamanLogin = () => {
   const [username, setUsername] = useState(" ");
   const [password, setPassword] = useState(" ");
   useEffect(() => {
-    handleLogin(username, password);
+    submitLogin(username, password);
   }, [username, password]);
   useEffect(() => {
     setErrorElement(undefined);
@@ -23,7 +22,7 @@ const HalamanLogin = () => {
   const createErrorElement = (message: String) => {
     setErrorElement(<div>{message}</div>);
   };
-  const handleLogin = (username: String, password: String) => {
+  const submitLogin = (username: String, password: String) => {
     if (isFormComplete(username, password)) {
       isPenjualAvailable(username, password).then((res) => {
         if (res === true) {

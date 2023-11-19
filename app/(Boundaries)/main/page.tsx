@@ -17,14 +17,14 @@ const HalamanUtamaPenjual = () => {
     <div className="h-screen w-screen ">
       <div className="h-1/4 bg-sky-800 text-white flex flex-col items-center justify-center">
         <div>kantin henny</div>
-        <div>jumlah antrian : 12</div>
+        <div className="text-red-200 text-sm">jumlah antrian : 12</div>
       </div>
       <div className="h-3/4  flex flex-col items-center justify-center">
         <div>
           <button onClick={() => showGenerationPage()}>gen url qr</button>
         </div>
         <div>
-          <button>lih daftar pelanggan</button>
+          <button onClick={() => showListPage()}>lih daftar pelanggan</button>
         </div>
       </div>
     </div>
