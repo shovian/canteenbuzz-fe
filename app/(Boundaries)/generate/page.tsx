@@ -1,7 +1,10 @@
 "use client";
 import {
+  assignNamaKios,
   convertToFile,
   generateQRURL,
+  getCurrentPenjualNamaKios,
+  isNamaKiosAvailable,
 } from "@/app/(Controls)/PenjualHandler/handler";
 import { ReactElement, useEffect, useState } from "react";
 function HalamanGenerasiURLdanQRcode() {
@@ -9,20 +12,22 @@ function HalamanGenerasiURLdanQRcode() {
   const [URL, setURL] = useState<String>("");
   const [image, setImage] = useState<HTMLImageElement>();
   const onPressGenerate = (kios: String) => {
+    assignNamaKios(kios);
     const code = kios;
     const generatedData = generateQRURL(code);
-    // setURL(generatedURL.url);
     setURL(generatedData.data.URL);
     setImage(generatedData.data.QR);
   };
   useEffect(() => {
     setIsNamaKiosInputted(true);
-    // const generatedQR = new Image();
-    // generatedQR.src = URL as string;
-    // setImage(generatedQR);
   }, [URL]);
   useEffect(() => {
-    setIsNamaKiosInputted(false);
+    if (isNamaKiosAvailable()) {
+      const currentNamaKios = getCurrentPenjualNamaKios();
+      const generatedData = generateQRURL(currentNamaKios!);
+      setURL(generatedData.data.URL);
+      setImage(generatedData.data.QR);
+    } else setIsNamaKiosInputted(false);
   }, []);
   const createErrorElement = (message: String) => {
     const page: ReactElement = <div>{message}</div>;

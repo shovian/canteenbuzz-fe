@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cookies-next": "^4.1.0",
     "firebase": "^10.6.0",
+    "howler": "^2.2.4",
     "html-react-parser": "^5.0.6",
     "next": "14.0.2",
     "nextjs-current-url": "^1.0.3",
@@ -19,6 +21,7 @@
     "react-router-dom": "^6.19.0"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

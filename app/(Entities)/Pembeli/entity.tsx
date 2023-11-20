@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
   collection,
-  query, 
+  query,
   where,
   orderBy,
   limit,
@@ -11,6 +11,8 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  setDoc,
+  addDoc,
 } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -32,35 +34,73 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-type Pembeli = {};
-
-export async function getPembeli(
-  penjualId: String
-) {
-    var res = false;
-    const docSnap = await collection(db, "kantin");
-    const kantin = await getDocs(query(docSnap, where("penjualId", "==", penjualId), limit(1)));
-
-    if(!kantin.empty){
-        const pembeli = await getDocs(query(collection(db, "pembeli"), where("kantinId", "==", kantin.docs[0].id), orderBy("waktu", "desc")));
-        return pembeli;
-    }
-
-    return null;
-}
-
-export async function changeStatus(
-    id: String,
-    status: String
-) {
-    var res = false;
-    const pembeliRef = doc(db, "pembeli", ""+id);
-
-    const update = await updateDoc(pembeliRef, {
-        status: status
+export type TPembeli = {
+  id?: String;
+  penjualId?: String;
+  waktu?: Date;
+  status?: String;
+  nama?: String;
+};
+export class Pembeli implements TPembeli {
+  id: String | undefined;
+  penjualId: String | undefined;
+  waktu: Date | undefined;
+  status: String | undefined;
+  nama: String | undefined;
+  constructor(pembeli: Pembeli | undefined) {
+    this.id = pembeli?.id;
+    this.penjualId = pembeli?.penjualId;
+    this.waktu = pembeli?.waktu;
+    this.status = pembeli?.status;
+    this.nama = pembeli?.nama;
+  }
+  static async build(nama: String) {
+    const pembeliRef = collection(db, "pembeli");
+    const pembeliRes = await addDoc(pembeliRef, {
+      nama: nama,
+      waktu: new Date(),
+      status: "Wait",
     });
+    const newPembeli: Pembeli = {
+      id: pembeliRes.id,
+      nama: nama,
+      waktu: new Date(),
+      status: "Wait",
+    } as unknown as Pembeli;
 
-    return update;
+    return new Pembeli(newPembeli);
+  }
+  getWaktu(): Date | undefined {
+    return this.waktu;
+  }
+
+  setWaktu(waktu: Date): void {
+    this.waktu = waktu;
+  }
+
+  getStatus(): String | undefined {
+    return this.status;
+  }
+
+  setStatus(status: String) {
+    this.status = status;
+    console.log(this.id);
+    const refPembeli = doc(db, "pembeli", this.id as string);
+    setDoc(refPembeli, { status: status }, { merge: true });
+  }
+
+  getNama(): String | undefined {
+    return this.nama;
+  }
+
+  setNama(nama: String): void {
+    this.nama = nama;
+  }
+
+  setPenjualId(id: String | undefined) {
+    this.penjualId = id;
+
+    const refPembeli = doc(db, "pembeli", this.id as string);
+    setDoc(refPembeli, { penjualId: id }, { merge: true });
+  }
 }
-
-

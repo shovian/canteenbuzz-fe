@@ -1,13 +1,15 @@
 "use client";
-import { redirectTunggu } from "@/app/(Controls)/PembeliHandler/handler";
-import { setNama } from "@/app/(Controls)/PenjualHandler/handler";
+import {
+  assignNama,
+  redirectTunggu,
+} from "@/app/(Controls)/PembeliHandler/handler";
 import { useParams, useRouter } from "next/navigation";
 
 const HalamanFormPengisianNama = () => {
   const router = useRouter();
-  const id = useParams().id;
+  const kios = useParams().id;
   function submitNama(nama: String) {
-    setNama(nama);
+    assignNama(nama, kios as string);
     redirectTunggu(router);
   }
   return (
@@ -19,10 +21,15 @@ const HalamanFormPengisianNama = () => {
         </div>
       </div>
       <div className="h-3/4 flex flex-col items-center justify-center">
-        <input placeholder="Masukkan Nama"></input>
-        <div>
+        <form
+          onSubmit={(e: any) => {
+            e.preventDefault();
+            submitNama(e.target.nama.value);
+          }}
+        >
+          <input id="nama" placeholder="Masukkan Nama"></input>
           <button>Submit</button>
-        </div>
+        </form>
       </div>
     </div>
   );

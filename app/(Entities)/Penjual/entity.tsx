@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
   collection,
-  query, 
+  query,
   where,
   orderBy,
   limit,
@@ -11,7 +11,9 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  setDoc,
 } from "firebase/firestore";
+import { Pembeli } from "../Pembeli/entity";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -30,35 +32,134 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
-// type Penjual = { pesanan: Pembeli[]; addPesanan: (pembeli: Pembeli) => {} };
+export type TPenjual = {
+  id: String;
+  kantinId: String;
+  kios?: String;
+  username: String;
+  password: String;
+  code: String;
+  pesanan: Pembeli[];
+};
+export class Penjual implements TPenjual {
+  id: String;
+  kantinId: String;
+  kios?: String;
+  username: String;
+  password: String;
+  code: String;
+  pesanan: Pembeli[];
 
-export async function getPesanan(
-  penjualId: String
-) {
-    var res = false;
-    const docSnap = await collection(db, "kantin");
-    const kantin = await getDocs(query(docSnap, where("penjualId", "==", penjualId), limit(1)));
+  constructor(
+    penjual: Penjual
+    // id: String,
+    // kantinId: String,
+    // kios: String | undefined,
+    // username: String,
+    // password: String,
+    // code: String,
+    // pesanan: Pembeli[] | undefined
+  ) {
+    this.id = penjual.id;
+    this.kantinId = penjual.kantinId;
+    this.kios = penjual.kios ? penjual.kios : undefined;
+    this.username = penjual.username;
+    this.password = penjual.password;
+    this.code = penjual.code;
+    this.pesanan = penjual.pesanan ? penjual.pesanan : [];
+  }
 
-    if(!kantin.empty){
-        const pembeli = await getDocs(query(collection(db, "pembeli"), where("kantinId", "==", kantin.docs[0].id), orderBy("waktu", "desc")));
-        return pembeli;
-    }
+  setId(id: String): void {
+    this.id = id;
+  }
 
-    return null;
+  setKantinId(kantinId: String): void {
+    this.kantinId = kantinId;
+  }
+
+  setKios(kios: String) {
+    this.kios = kios;
+    setDoc(
+      doc(db, "penjual", this.id as string),
+      { kios: kios },
+      { merge: true }
+    );
+  }
+
+  setUsername(username: String): void {
+    this.username = username;
+  }
+
+  setPassword(password: String): void {
+    this.password = password;
+  }
+
+  setCode(code: String): void {
+    this.code = code;
+  }
+
+  setPesanan(pesanan: Pembeli[]): void {
+    this.pesanan = pesanan;
+  }
+
+  getId(): String {
+    return this.id;
+  }
+
+  getKantinId(): String {
+    return this.kantinId;
+  }
+
+  getKios(): String | undefined {
+    return this.kios;
+  }
+
+  getUsername(): String {
+    return this.username;
+  }
+
+  getPassword(): String {
+    return this.password;
+  }
+
+  getCode(): String {
+    return this.code;
+  }
+
+  getPesanan(): Pembeli[] {
+    return this.pesanan;
+  }
 }
+// export async function getPesanan(penjualId: String) {
+//   var res = false;
+//   const docSnap = collection(db, "kantin");
+//   const kantin = await getDocs(
+//     query(docSnap, where("penjualId", "==", penjualId), limit(1))
+//   );
 
-export async function setKios(
-    id: string,
-    kios: String
-){
-    var res = false;
-    const kiosRef = doc(db, "kantin", ""+id);
+//   if (!kantin.empty) {
+//     const pembeli = await getDocs(
+//       query(
+//         collection(db, "pembeli"),
+//         where("kantinId", "==", kantin.docs[0].id),
+//         orderBy("waktu", "desc")
+//       )
+//     );
+//     return pembeli;
+//   }
 
-    const update = await updateDoc(kiosRef, {
-        namaKios: kios
-    });
+//   return null;
+// }
 
-    return update;
-}
+// export async function setKios(id: String, kios: String) {
+//   var res = false;
+//   const kiosRef = doc(db, "kantin", "" + id);
+
+//   const update = await updateDoc(kiosRef, {
+//     namaKios: kios,
+//   });
+
+//   return update;
+// }

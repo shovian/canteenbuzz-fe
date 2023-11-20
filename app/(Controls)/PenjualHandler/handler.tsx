@@ -1,25 +1,132 @@
 import qrcode from "qrcode-generator";
-import parse, { Element } from "html-react-parser";
-import { ReactElement } from "react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-type Kantin = {
-  penjuals: Penjual[];
-  getPenjualByCredentials?: (username: String, password: String) => Penjual;
-  getPenjualById: (id: String) => Penjual;
-};
-function getCurrentSession() {
-  return { cookies: { penjual: { id: "x76e7hufhg875rf" } } };
+import {
+  getPenjualByCredentials,
+  getPenjualByKios,
+} from "../KantinHandler/handler";
+import { Penjual, db } from "@/app/(Entities)/Penjual/entity";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { Pembeli } from "@/app/(Entities)/Pembeli/entity";
+import { Dispatch, SetStateAction } from "react";
+
+export async function addPesanan(nama: String, kios: String) {
+  const penjual = await getPenjualByKios(kios);
+  const pembeli = await Pembeli.build(nama);
+  pembeli.setPenjualId(penjual?.id);
+  if (penjual) {
+    penjual.setPesanan([...penjual.pesanan, pembeli]);
+  }
 }
-export function setNama(nama: String) {
-  const kantin: Kantin = {
-    penjuals: [],
-    getPenjualById: function getPenjualById() {
-      return this.penjuals[0];
-    },
-  };
-  const currentPenjual: Penjual = kantin.getPenjualById(
-    getCurrentSession().cookies.penjual.id
+export function isPenjualLogged() {
+  const isLogged = getCurrentPenjual() != null;
+  return isLogged;
+}
+export async function isPenjualAvailable(username: String, password: String) {
+  const penjual = await getPenjualByCredentials(username, password);
+  return penjual === undefined ? false : true;
+}
+export async function isPenjualLoggedAndAvailable() {
+  if (isPenjualLogged()) {
+    const username = getCurrentPenjualUsername();
+    const password = getCurrentPenjualPassword();
+
+    return await isPenjualAvailable(username || "", password || "").then(
+      (isAvailable) => {
+        if (isAvailable) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    );
+  } else return false;
+}
+export function getCurrentPenjual() {
+  const penjualString = localStorage.getItem("penjual");
+  const penjual: Penjual | null = penjualString
+    ? JSON.parse(penjualString)
+    : null;
+  return penjual;
+}
+export function getCurrentPenjualUsername() {
+  const penjual = getCurrentPenjual();
+  return penjual?.username;
+}
+export function getCurrentPenjualPassword() {
+  const penjual = getCurrentPenjual();
+  return penjual?.password;
+}
+export async function getPesananByNama(name: String) {
+  const queryPembeli = query(
+    collection(db, "pembeli"),
+    where("nama", "==", name)
   );
+  const resPembeli = await getDocs(queryPembeli);
+  const pesanan: Pembeli[] = [];
+  const currentPenjual = getCurrentPenjual();
+  resPembeli.forEach((doc) => {
+    const data = doc.data() as Pembeli;
+    if (currentPenjual!.id === data.penjualId) {
+      pesanan.push(data);
+    }
+  });
+  return pesanan[0];
+}
+
+export function setLoggedPenjual(penjual: Penjual | undefined) {
+  localStorage.setItem("penjual", JSON.stringify(penjual));
+}
+export function updateCurrentPenjual(penjual: Penjual) {
+  removeLoggedPenjual();
+  setLoggedPenjual(penjual);
+}
+export function setLoggedPenjualByCredentials(
+  username: String,
+  password: String
+) {
+  getPenjualByCredentials(username, password).then((penjual) => {
+    setLoggedPenjual(penjual);
+  });
+}
+export function removeLoggedPenjual() {
+  localStorage.removeItem("penjual");
+}
+
+export function assignNamaKios(kios: String) {
+  const currentPenjual = getCurrentPenjual();
+  const penjual = new Penjual(currentPenjual!);
+  if (penjual) {
+    penjual.setKios(kios);
+    updateCurrentPenjual(penjual);
+  }
+}
+export function subscribePesanan(
+  callback: Dispatch<SetStateAction<String[] | undefined>>
+) {
+  const penjual = getCurrentPenjual();
+  const unsub = onSnapshot(collection(db, "pembeli"), (doc) => {
+    const fetchedPesanan: String[] = [];
+    doc.docs.forEach((data) => {
+      const pesanan = { id: data.id, ...data.data() } as unknown as Pembeli;
+      if (pesanan.penjualId === penjual!.id) fetchedPesanan.push(pesanan.nama!);
+    });
+    callback(fetchedPesanan);
+  });
+}
+export function getCurrentPenjualNamaKios() {
+  const penjual = getCurrentPenjual();
+  return penjual?.kios;
+}
+export function isNamaKiosAvailable() {
+  const namaKios = getCurrentPenjualNamaKios();
+  return namaKios;
 }
 export function redirectGeneration(router: AppRouterInstance) {
   router.push("/generate");
@@ -40,7 +147,7 @@ export function generateQRURL(code: String) {
     window.location.port +
     "/name/" +
     code;
-  var qr = qrcode(4, "L");
+  const qr = qrcode(4, "L");
   qr.addData(pathname);
   qr.make();
   const imgString = qr.createImgTag();
