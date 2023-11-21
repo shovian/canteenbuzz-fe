@@ -9,7 +9,7 @@ const HalamanFormPengisianNama = () => {
   const router = useRouter();
   const kios = useParams().id;
   function submitNama(nama: String) {
-    assignNama(nama, kios as string);
+    assignNama(nama, kios as string, router);
     // redirectTunggu(router);
   }
   return (

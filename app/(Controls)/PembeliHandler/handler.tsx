@@ -18,9 +18,14 @@ export function subscribeStatus(
 export function redirectTunggu(router: AppRouterInstance) {
   router.push("/wait");
 }
-export async function assignNama(nama: String, kios: String) {
+export async function assignNama(
+  nama: String,
+  kios: String,
+  router: AppRouterInstance
+) {
   await addPesanan(nama, kios);
   setCurrentPembeli(await getPembeliByNamaAndKios(nama, kios));
+  redirectTunggu(router);
 }
 export async function notifyPembeli(nama: String) {}
 
