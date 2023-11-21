@@ -8,15 +8,21 @@ const HalamanTunggu = () => {
   useEffect(() => {}, []);
   useEffect(() => {
     subscribeStatus(setStatus);
-    if (status === "Ready") {
-      var sound = new Howl({
-        src: ["/music/notif.mp3"],
-        volume: 0.5,
-        loop: true,
-      });
-      sound.play();
-      navigator.vibrate(200);
-    }
+    var constraints = { audio: true }; // add video constraints if required
+
+    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+      var audioContext = new AudioContext();
+      if (status === "Ready") {
+        var sound = new Howl({
+          src: ["/music/notif.mp3"],
+          volume: 0.5,
+          loop: true,
+        });
+        sound.play();
+        navigator.vibrate(200);
+      }
+      // ... rest of code
+    });
   }, [status]);
   return status ? (
     <div className="h-screen w-screen bg-red-500 flex flex-col items-center justify-center">
