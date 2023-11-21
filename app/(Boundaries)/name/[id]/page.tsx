@@ -10,7 +10,7 @@ const HalamanFormPengisianNama = () => {
   const kios = useParams().id;
   function submitNama(nama: String) {
     assignNama(nama, kios as string);
-    redirectTunggu(router);
+    // redirectTunggu(router);
   }
   return (
     <div className="h-screen w-screen ">

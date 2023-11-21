@@ -42,6 +42,7 @@ export async function getPembeliByNamaAndKios(nama: String, kios: String) {
   const pembeli = penjual?.pesanan.filter((node) => {
     return node.nama === nama;
   });
+  console.log("pembelihandler", pembeli);
 
   return new Pembeli(pembeli ? pembeli[0] : undefined);
 }
