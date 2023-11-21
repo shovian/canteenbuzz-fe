@@ -9,11 +9,31 @@ import { doc, onSnapshot } from "firebase/firestore";
 export function subscribeStatus(
   callback: Dispatch<SetStateAction<String | undefined>>
 ) {
-  const pembeli: Pembeli = getCurrentPembeli();
-  const unsub = onSnapshot(doc(db, "pembeli", pembeli.id as string), (doc) => {
-    const status = (doc.data() as { status: String }).status;
-    callback(status);
-  });
+  if ("PushManager" in window) {
+    // Request permission for push notifications
+    Notification.requestPermission()
+      .then(function (permission) {
+        if (permission === "granted") {
+          // Permission is granted, you can now subscribe the user to receive push notifications
+          const pembeli: Pembeli = getCurrentPembeli();
+          const unsub = onSnapshot(
+            doc(db, "pembeli", pembeli.id as string),
+            (doc) => {
+              const status = (doc.data() as { status: String }).status;
+              callback(status);
+            }
+          );
+        } else {
+          // Permission is denied
+          console.log("Push notification permission denied");
+        }
+      })
+      .catch(function (error) {
+        console.error("Error requesting push notification permission:", error);
+      });
+  } else {
+    console.warn("Push notifications are not supported in this browser");
+  }
 }
 export function redirectTunggu(router: AppRouterInstance) {
   router.push("/wait");
