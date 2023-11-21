@@ -7,7 +7,7 @@ const HalamanTunggu = () => {
   const [status, setStatus] = useState<String>();
   useEffect(() => {}, []);
   useEffect(() => {
-    subscribeStatus(setStatus);
+    // subscribeStatus(setStatus);
     // if (status === "Ready") {
     //   var sound = new Howl({
     //     src: ["/music/notif.mp3"],
