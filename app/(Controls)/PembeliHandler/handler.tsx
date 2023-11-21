@@ -25,8 +25,9 @@ export async function assignNama(nama: String, kios: String) {
 export async function notifyPembeli(nama: String) {}
 
 export function setCurrentPembeli(pembeli: Pembeli) {
-  typeof window !== "undefined" &&
-    localStorage.setItem("pembeli", JSON.stringify(pembeli));
+  typeof window !== "undefined"
+    ? localStorage.setItem("pembeli", JSON.stringify(pembeli))
+    : null;
 }
 export function getCurrentPembeli() {
   const pembeliString =
