@@ -18,12 +18,14 @@ const HalamanTunggu = () => {
     //   navigator.vibrate(200);
     // }
   }, [status]);
-  return (
+  return status ? (
     <div className="h-screen w-screen bg-red-500 flex flex-col items-center justify-center">
       <div>makananmu sedang {status}</div>
       <div>antrian sekarang:</div>
       <div>05</div>
     </div>
+  ) : (
+    <div>page is loading</div>
   );
 };
 export default HalamanTunggu;
