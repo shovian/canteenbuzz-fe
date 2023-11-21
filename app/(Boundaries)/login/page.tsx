@@ -46,7 +46,7 @@ const HalamanLogin = () => {
   return loadPage ? (
     <div className="z-10 h-screen w-screen flex flex-col justify-center items-center ">
       <div className="">
-        <h1>Login</h1>
+        <h1 className="text-lg">Login</h1>
       </div>
       <div className="">Selamat Datang Kembali!</div>
       <form
