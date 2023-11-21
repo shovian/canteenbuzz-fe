@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Howl, Howler } from "howler";
 
 const HalamanTunggu = () => {
-  const [status, setStatus] = useState<String>();
+  const [status, setStatus] = useState<String>("");
   useEffect(() => {}, []);
   useEffect(() => {
     // subscribeStatus(setStatus);
