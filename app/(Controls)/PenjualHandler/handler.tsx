@@ -82,8 +82,9 @@ export async function getPesananByNama(name: String) {
 }
 
 export function setLoggedPenjual(penjual: Penjual | undefined) {
-  typeof window !== "undefined" &&
-    localStorage.setItem("penjual", JSON.stringify(penjual));
+  typeof window !== "undefined"
+    ? localStorage.setItem("penjual", JSON.stringify(penjual))
+    : null;
 }
 export function updateCurrentPenjual(penjual: Penjual) {
   removeLoggedPenjual();
@@ -98,7 +99,7 @@ export function setLoggedPenjualByCredentials(
   });
 }
 export function removeLoggedPenjual() {
-  typeof window !== "undefined" && localStorage.removeItem("penjual");
+  typeof window !== "undefined" ? localStorage.removeItem("penjual") : null;
 }
 
 export function assignNamaKios(kios: String) {
