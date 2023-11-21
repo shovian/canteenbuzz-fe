@@ -49,7 +49,8 @@ export async function isPenjualLoggedAndAvailable() {
   } else return false;
 }
 export function getCurrentPenjual() {
-  const penjualString = localStorage.getItem("penjual");
+  const penjualString =
+    typeof window !== "undefined" ? localStorage.getItem("penjual") : "";
   const penjual: Penjual | null = penjualString
     ? JSON.parse(penjualString)
     : null;
@@ -81,7 +82,8 @@ export async function getPesananByNama(name: String) {
 }
 
 export function setLoggedPenjual(penjual: Penjual | undefined) {
-  localStorage.setItem("penjual", JSON.stringify(penjual));
+  typeof window !== "undefined" &&
+    localStorage.setItem("penjual", JSON.stringify(penjual));
 }
 export function updateCurrentPenjual(penjual: Penjual) {
   removeLoggedPenjual();
@@ -96,7 +98,7 @@ export function setLoggedPenjualByCredentials(
   });
 }
 export function removeLoggedPenjual() {
-  localStorage.removeItem("penjual");
+  typeof window !== "undefined" && localStorage.removeItem("penjual");
 }
 
 export function assignNamaKios(kios: String) {
