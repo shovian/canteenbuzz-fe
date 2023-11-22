@@ -1,6 +1,10 @@
 "use client";
 import { redirectMainPage } from "@/app/(Controls)/KantinHandler/handler";
 import {
+  getCurrentPembeli,
+  removeCurrentPembeli,
+} from "@/app/(Controls)/PembeliHandler/handler";
+import {
   isPenjualAvailable,
   isPenjualLoggedAndAvailable,
   removeLoggedPenjual,
@@ -15,6 +19,7 @@ const HalamanLogin = () => {
   const [loadPage, setLoadPage] = useState(false);
 
   useEffect(() => {
+    getCurrentPembeli().getNama() ? getCurrentPembeli().setStatus("Done") : {};
     setErrorElement(undefined);
     isPenjualLoggedAndAvailable().then((isLoggedAndAvailable) => {
       if (isLoggedAndAvailable) {

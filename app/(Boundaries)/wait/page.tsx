@@ -1,5 +1,7 @@
 "use client";
 import {
+  getCurrentPembeli,
+  removeCurrentPembeli,
   storeToken,
   subscribePushNotification,
   subscribeStatus,
@@ -7,16 +9,16 @@ import {
 import { useEffect, useState } from "react";
 import { Howl, Howler } from "howler";
 import Script from "next/script";
-import OneSignal from "react-onesignal";
+import { redirectMainPage } from "@/app/(Controls)/KantinHandler/handler";
+import { useRouter } from "next/navigation";
 const HalamanTunggu = () => {
+  const router = useRouter();
   const [status, setStatus] = useState<String>();
-  const [optedIn, setOptedIn] = useState(false);
   useEffect(() => {
     subscribePushNotification();
+    subscribeStatus(setStatus);
   }, []);
   useEffect(() => {
-    subscribeStatus(setStatus);
-
     if (status === "Ready") {
       var sound = new Howl({
         src: ["/music/notif.mp3"],
@@ -25,6 +27,13 @@ const HalamanTunggu = () => {
       });
       sound.play();
       navigator.vibrate(200);
+    } else if (status === "Done") {
+      getCurrentPembeli()
+        .setStatus("Done")
+        .then(() => {
+          removeCurrentPembeli();
+          redirectMainPage(router);
+        });
     }
   }, [status]);
   return status ? (

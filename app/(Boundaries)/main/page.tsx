@@ -26,15 +26,18 @@ const HalamanUtamaPenjual = () => {
       <div className="h-1/4 bg-sky-800 text-white flex flex-col items-center justify-center">
         <div>{namaKios}</div>
         <div className="text-red-200 text-sm">
-          jumlah antrian : {pesanan?.length}
+          Jumlah Antrian : {pesanan?.length}
         </div>
       </div>
       <div className="h-3/4  flex flex-col items-center justify-center">
-        <div>
-          <button onClick={() => showGenerationPage()}>gen url qr</button>
-        </div>
-        <div>
-          <button onClick={() => showListPage()}>lih daftar pelanggan</button>
+        <div className=" flex flex-col items-center justify-center ">
+          <button className="w-full" onClick={() => showGenerationPage()}>
+            Generate URL+QR Code
+          </button>
+
+          <button className="w-full" onClick={() => showListPage()}>
+            Lihat daftar pelanggan
+          </button>
         </div>
       </div>
     </div>

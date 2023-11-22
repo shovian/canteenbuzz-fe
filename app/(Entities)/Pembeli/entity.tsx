@@ -84,10 +84,10 @@ export class Pembeli implements TPembeli {
     return this.status;
   }
 
-  setStatus(status: String) {
+  async setStatus(status: String) {
     this.status = status;
     const refPembeli = doc(db, "pembeli", this.id as string);
-    setDoc(refPembeli, { status: status }, { merge: true });
+    await setDoc(refPembeli, { status: status }, { merge: true });
   }
 
   getNama(): String | undefined {

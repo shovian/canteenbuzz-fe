@@ -70,3 +70,6 @@ export function getCurrentPembeli() {
     : new Pembeli(undefined);
   return currentPembeli;
 }
+export function removeCurrentPembeli() {
+  typeof window !== "undefined" ? localStorage.removeItem("pembeli") : {};
+}
