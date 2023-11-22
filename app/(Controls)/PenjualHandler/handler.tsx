@@ -23,7 +23,6 @@ export async function notifyPembeli(nama: String) {
     nama,
     penjual.getKios() as String
   );
-  console.log(penjual, pembeli);
 
   const options = {
     method: "POST",
