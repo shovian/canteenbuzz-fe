@@ -5,38 +5,34 @@ import { Penjual, db } from "@/app/(Entities)/Penjual/entity";
 import { addPesanan } from "../PenjualHandler/handler";
 import { Dispatch, SetStateAction } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
+import OneSignal from "react-onesignal";
 
-export function subscribeStatus(
-  callback: Dispatch<SetStateAction<String | undefined>>
-) {
-  if ("PushManager" in window) {
-    // Request permission for push notifications
-    Notification.requestPermission()
-      .then(function (permission) {
-        if (permission === "granted") {
-          // Permission is granted, you can now subscribe the user to receive push notifications
-          const pembeli: Pembeli = getCurrentPembeli();
-          const unsub = onSnapshot(
-            doc(db, "pembeli", pembeli.id as string),
-            (doc) => {
-              const status = (doc.data() as { status: String }).status;
-              callback(status);
-            }
-          );
-        } else {
-          // Permission is denied
-          console.log("Push notification permission denied");
-        }
-      })
-      .catch(function (error) {
-        console.error("Error requesting push notification permission:", error);
-      });
-  } else {
-    console.warn("Push notifications are not supported in this browser");
-  }
+export async function getPembeliByNamaAndKios(nama: String, kios: String) {
+  const penjual: Penjual = await getPenjualByKios(kios);
+  const pembeli = penjual.getPesanan().filter((node) => {
+    return node.nama === nama;
+  });
+
+  return new Pembeli(pembeli ? pembeli[0] : undefined);
 }
-export function redirectTunggu(router: AppRouterInstance) {
-  router.push("/wait");
+export async function subscribePushNotification() {
+  await OneSignal.init({
+    appId: "38b65b98-e456-48ea-9ea8-a62643db0e26",
+    allowLocalhostAsSecureOrigin: true,
+  }).finally(() => {
+    OneSignal.Slidedown.promptPush({ force: true });
+    OneSignal.Notifications.addEventListener("permissionChange", () => {
+      window.location.reload();
+    });
+  });
+  OneSignal.User.PushSubscription.id
+    ? storeToken(OneSignal.User.PushSubscription.id as String)
+    : {};
+}
+export async function storeToken(token: String) {
+  const pembeli = getCurrentPembeli();
+  pembeli.setToken(token);
+  setCurrentPembeli(pembeli);
 }
 export async function assignNama(
   nama: String,
@@ -45,10 +41,22 @@ export async function assignNama(
 ) {
   await addPesanan(nama, kios);
   setCurrentPembeli(await getPembeliByNamaAndKios(nama, kios));
+
   redirectTunggu(router);
 }
-export async function notifyPembeli(nama: String) {}
 
+export function subscribeStatus(
+  callback: Dispatch<SetStateAction<String | undefined>>
+) {
+  const pembeli: Pembeli = getCurrentPembeli();
+  const unsub = onSnapshot(doc(db, "pembeli", pembeli.id as string), (doc) => {
+    const status = (doc.data() as { status: String }).status;
+    callback(status);
+  });
+}
+export function redirectTunggu(router: AppRouterInstance) {
+  router.push("/wait");
+}
 export function setCurrentPembeli(pembeli: Pembeli) {
   typeof window !== "undefined"
     ? localStorage.setItem("pembeli", JSON.stringify(pembeli))
@@ -58,16 +66,7 @@ export function getCurrentPembeli() {
   const pembeliString =
     typeof window !== "undefined" ? localStorage.getItem("pembeli") : "";
   const currentPembeli: Pembeli = pembeliString
-    ? JSON.parse(pembeliString)
+    ? new Pembeli(JSON.parse(pembeliString))
     : new Pembeli(undefined);
   return currentPembeli;
-}
-export async function getPembeliByNamaAndKios(nama: String, kios: String) {
-  const penjual: Penjual | undefined = await getPenjualByKios(kios);
-  const pembeli = penjual?.pesanan.filter((node) => {
-    return node.nama === nama;
-  });
-  console.log("pembelihandler", pembeli);
-
-  return new Pembeli(pembeli ? pembeli[0] : undefined);
 }

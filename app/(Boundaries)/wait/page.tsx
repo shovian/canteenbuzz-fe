@@ -1,10 +1,19 @@
 "use client";
-import { subscribeStatus } from "@/app/(Controls)/PembeliHandler/handler";
+import {
+  storeToken,
+  subscribePushNotification,
+  subscribeStatus,
+} from "@/app/(Controls)/PembeliHandler/handler";
 import { useEffect, useState } from "react";
 import { Howl, Howler } from "howler";
+import Script from "next/script";
+import OneSignal from "react-onesignal";
 const HalamanTunggu = () => {
   const [status, setStatus] = useState<String>();
-  useEffect(() => {}, []);
+  const [optedIn, setOptedIn] = useState(false);
+  useEffect(() => {
+    subscribePushNotification();
+  }, []);
   useEffect(() => {
     subscribeStatus(setStatus);
 
@@ -20,6 +29,10 @@ const HalamanTunggu = () => {
   }, [status]);
   return status ? (
     <div className="h-screen w-screen bg-red-500 flex flex-col items-center justify-center">
+      <Script
+        defer
+        src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
+      ></Script>
       <div>makananmu sedang </div>
       <div>antrian sekarang:</div>
       <div>05</div>

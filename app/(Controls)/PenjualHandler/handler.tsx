@@ -15,13 +15,43 @@ import {
 } from "firebase/firestore";
 import { Pembeli } from "@/app/(Entities)/Pembeli/entity";
 import { Dispatch, SetStateAction } from "react";
+import { getPembeliByNamaAndKios } from "../PembeliHandler/handler";
 
+export async function notifyPembeli(nama: String) {
+  const penjual = getCurrentPenjual();
+  const pembeli = await getPembeliByNamaAndKios(
+    nama,
+    penjual.getKios() as String
+  );
+  console.log(penjual, pembeli);
+
+  const options = {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      Authorization: "Basic ZmU4NzU0YzctMGNhMi00YTFiLWJkMTYtODViYjljMmQzYjkw",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      app_id: "38b65b98-e456-48ea-9ea8-a62643db0e26",
+      include_subscription_ids: [pembeli.token],
+      contents: {
+        en: "Pesanan Kamu sudah selesai!",
+      },
+    }),
+  };
+
+  fetch("https://onesignal.com/api/v1/notifications", options)
+    .then((response) => response.json())
+    .then((response) => console.log(response))
+    .catch((err) => console.error(err));
+}
 export async function addPesanan(nama: String, kios: String) {
   const penjual = await getPenjualByKios(kios);
   const pembeli = await Pembeli.build(nama);
   pembeli.setPenjualId(penjual?.id);
   if (penjual) {
-    penjual.setPesanan([...penjual.pesanan, pembeli]);
+    penjual.setPesanan([...penjual.getPesanan(), pembeli]);
   }
 }
 export function isPenjualLogged() {
@@ -51,10 +81,8 @@ export async function isPenjualLoggedAndAvailable() {
 export function getCurrentPenjual() {
   const penjualString =
     typeof window !== "undefined" ? localStorage.getItem("penjual") : "";
-  const penjual: Penjual | null = penjualString
-    ? JSON.parse(penjualString)
-    : null;
-  return penjual;
+  const penjual: Penjual = penjualString ? JSON.parse(penjualString) : null;
+  return new Penjual(penjual);
 }
 export function getCurrentPenjualUsername() {
   const penjual = getCurrentPenjual();
@@ -80,7 +108,6 @@ export async function getPesananByNama(name: String) {
   });
   return pesanan[0];
 }
-
 export function setLoggedPenjual(penjual: Penjual | undefined) {
   typeof window !== "undefined"
     ? localStorage.setItem("penjual", JSON.stringify(penjual))
@@ -101,7 +128,6 @@ export function setLoggedPenjualByCredentials(
 export function removeLoggedPenjual() {
   typeof window !== "undefined" ? localStorage.removeItem("penjual") : null;
 }
-
 export function assignNamaKios(kios: String) {
   const currentPenjual = getCurrentPenjual();
   const penjual = new Penjual(currentPenjual!);

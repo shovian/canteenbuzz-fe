@@ -33,40 +33,31 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 export type TPenjual = {
-  id: String;
-  kantinId: String;
+  id?: String;
+  kantinId?: String;
   kios?: String;
-  username: String;
-  password: String;
-  code: String;
-  pesanan: Pembeli[];
+  username?: String;
+  password?: String;
+  code?: String;
+  pesanan?: Pembeli[];
 };
 export class Penjual implements TPenjual {
-  id: String;
-  kantinId: String;
+  id?: String;
+  kantinId?: String;
   kios?: String;
-  username: String;
-  password: String;
-  code: String;
-  pesanan: Pembeli[];
+  username?: String;
+  password?: String;
+  code?: String;
+  pesanan?: Pembeli[];
 
-  constructor(
-    penjual: Penjual
-    // id: String,
-    // kantinId: String,
-    // kios: String | undefined,
-    // username: String,
-    // password: String,
-    // code: String,
-    // pesanan: Pembeli[] | undefined
-  ) {
-    this.id = penjual.id;
-    this.kantinId = penjual.kantinId;
-    this.kios = penjual.kios ? penjual.kios : undefined;
-    this.username = penjual.username;
-    this.password = penjual.password;
-    this.code = penjual.code;
-    this.pesanan = penjual.pesanan ? penjual.pesanan : [];
+  constructor(penjual: Penjual | undefined) {
+    this.id = penjual?.id;
+    this.kantinId = penjual?.kantinId;
+    this.kios = penjual?.kios ? penjual.kios : undefined;
+    this.username = penjual?.username;
+    this.password = penjual?.password;
+    this.code = penjual?.code;
+    this.pesanan = penjual?.pesanan ? penjual.pesanan : [];
   }
 
   setId(id: String): void {
@@ -102,11 +93,11 @@ export class Penjual implements TPenjual {
     this.pesanan = pesanan;
   }
 
-  getId(): String {
+  getId(): String | undefined {
     return this.id;
   }
 
-  getKantinId(): String {
+  getKantinId(): String | undefined {
     return this.kantinId;
   }
 
@@ -114,20 +105,20 @@ export class Penjual implements TPenjual {
     return this.kios;
   }
 
-  getUsername(): String {
+  getUsername(): String | undefined {
     return this.username;
   }
 
-  getPassword(): String {
+  getPassword(): String | undefined {
     return this.password;
   }
 
-  getCode(): String {
+  getCode(): String | undefined {
     return this.code;
   }
 
   getPesanan(): Pembeli[] {
-    return this.pesanan;
+    return this.pesanan || [];
   }
 }
 // export async function getPesanan(penjualId: String) {

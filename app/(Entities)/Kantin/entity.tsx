@@ -79,8 +79,6 @@ export class Kantin implements TKantin {
   }
   getPenjualByKios(kios: String) {
     return this.penjuals.filter((node) => {
-      console.log(kios);
-
       return node.kios === kios;
     })[0];
   }

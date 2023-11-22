@@ -38,6 +38,7 @@ export type TPembeli = {
   waktu?: Date;
   status?: String;
   nama?: String;
+  token?: String;
 };
 export class Pembeli implements TPembeli {
   id: String | undefined;
@@ -45,13 +46,16 @@ export class Pembeli implements TPembeli {
   waktu: Date | undefined;
   status: String | undefined;
   nama: String | undefined;
+  token: String | undefined;
   constructor(pembeli: Pembeli | undefined) {
     this.id = pembeli?.id;
     this.penjualId = pembeli?.penjualId;
     this.waktu = pembeli?.waktu;
     this.status = pembeli?.status;
     this.nama = pembeli?.nama;
+    this.token = pembeli?.token;
   }
+
   static async build(nama: String) {
     const pembeliRef = collection(db, "pembeli");
     const pembeliRes = await addDoc(pembeliRef, {
@@ -82,7 +86,6 @@ export class Pembeli implements TPembeli {
 
   setStatus(status: String) {
     this.status = status;
-    console.log(this.id);
     const refPembeli = doc(db, "pembeli", this.id as string);
     setDoc(refPembeli, { status: status }, { merge: true });
   }
@@ -100,5 +103,10 @@ export class Pembeli implements TPembeli {
 
     const refPembeli = doc(db, "pembeli", this.id as string);
     setDoc(refPembeli, { penjualId: id }, { merge: true });
+  }
+  setToken(token: String | undefined) {
+    this.token = token;
+    const refPembeli = doc(db, "pembeli", this.id as string);
+    setDoc(refPembeli, { token: token }, { merge: true });
   }
 }

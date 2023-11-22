@@ -8,12 +8,10 @@ export function redirectMainPage(router: AppRouterInstance) {
 
 export async function getPenjualByKios(kios: String) {
   const penjual: Penjual = await Kantin.build().then((kantin) => {
-    console.log(kantin);
     return kantin.getPenjualByKios(kios);
   });
 
-  const res = penjual ? new Penjual(penjual) : undefined;
-  return res;
+  return new Penjual(penjual);
 }
 
 export async function getPenjualByCredentials(
