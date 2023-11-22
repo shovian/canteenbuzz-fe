@@ -22,7 +22,7 @@ export async function subscribePushNotification() {
   }).finally(() => {
     OneSignal.Slidedown.promptPush({ force: true });
     OneSignal.Notifications.addEventListener("permissionChange", () => {
-      window.location.reload();
+      typeof window !== "undefined" ? window.location.reload() : {};
     });
   });
   OneSignal.User.PushSubscription.id

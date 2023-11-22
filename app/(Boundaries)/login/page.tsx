@@ -1,9 +1,6 @@
 "use client";
 import { redirectMainPage } from "@/app/(Controls)/KantinHandler/handler";
-import {
-  getCurrentPembeli,
-  removeCurrentPembeli,
-} from "@/app/(Controls)/PembeliHandler/handler";
+import { getCurrentPembeli } from "@/app/(Controls)/PembeliHandler/handler";
 import {
   isPenjualAvailable,
   isPenjualLoggedAndAvailable,

@@ -1,8 +1,5 @@
 "use client";
-import {
-  assignNama,
-  redirectTunggu,
-} from "@/app/(Controls)/PembeliHandler/handler";
+import { assignNama } from "@/app/(Controls)/PembeliHandler/handler";
 import { useParams, useRouter } from "next/navigation";
 
 const HalamanFormPengisianNama = () => {
