@@ -2,6 +2,7 @@
 import {
   getCurrentPembeli,
   removeCurrentPembeli,
+  subscribeAntrian,
   subscribePushNotification,
   subscribeStatus,
 } from "@/app/(Controls)/PembeliHandler/handler";
@@ -10,10 +11,11 @@ import { Howl } from "howler";
 import Script from "next/script";
 const HalamanTunggu = () => {
   const [status, setStatus] = useState<String>();
-  const [antrian, setAntrian] = useState<String>("05");
+  const [antrian, setAntrian] = useState<String>();
   const [pesananSelesai, setPesananSelesai] = useState(false);
   useEffect(() => {
     subscribePushNotification();
+    subscribeAntrian(setAntrian);
     subscribeStatus(setStatus);
     if (status === "Done") {
       setPesananSelesai(true);
@@ -29,12 +31,11 @@ const HalamanTunggu = () => {
         loop: true,
       });
       sound.play();
-      window.navigator.vibrate && window.navigator.vibrate(2000);
+      window.navigator.vibrate && window.navigator.vibrate(20000);
     }
   }, [status]);
-  console.log(status);
 
-  return status === undefined ? (
+  return status !== undefined ? (
     <div className="h-screen w-screen flex flex-col items-center justify-center">
       <Script
         defer

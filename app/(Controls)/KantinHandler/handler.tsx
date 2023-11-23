@@ -13,7 +13,13 @@ export async function getPenjualByKios(kios: String) {
 
   return new Penjual(penjual);
 }
+export async function getPenjualById(id: String) {
+  const penjual: Penjual = await Kantin.build().then((kantin) => {
+    return kantin.getPenjualById(id);
+  });
 
+  return new Penjual(penjual);
+}
 export async function getPenjualByCredentials(
   username: String,
   password: String

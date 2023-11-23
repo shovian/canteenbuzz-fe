@@ -67,11 +67,11 @@ export class Kantin implements TKantin {
 
     return new Kantin(fetchedPenjuals);
   }
-  async getPenjualById(id: String) {
-    return this.penjuals.filter((node) => {
-      return node.id === id;
-    })[0];
-  }
+  // async getPenjualById(id: String) {
+  //   return this.penjuals.filter((node) => {
+  //     return node.id === id;
+  //   })[0];
+  // }
   getPenjualByCredentials(username: String, password: String) {
     return this.penjuals.filter((node) => {
       return node.username === username && node.password === password;
@@ -80,6 +80,11 @@ export class Kantin implements TKantin {
   getPenjualByKios(kios: String) {
     return this.penjuals.filter((node) => {
       return node.kios === kios;
+    })[0];
+  }
+  getPenjualById(id: String) {
+    return this.penjuals.filter((node) => {
+      return node.id === id;
     })[0];
   }
   async getPenjualByCode(code: String) {

@@ -1,10 +1,10 @@
 import { Pembeli } from "@/app/(Entities)/Pembeli/entity";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { getPenjualByKios } from "../KantinHandler/handler";
+import { getPenjualById, getPenjualByKios } from "../KantinHandler/handler";
 import { Penjual, db } from "@/app/(Entities)/Penjual/entity";
 import { addPesanan } from "../PenjualHandler/handler";
 import { Dispatch, SetStateAction } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot } from "firebase/firestore";
 import OneSignal from "react-onesignal";
 
 export async function getPembeliByNamaAndKios(nama: String, kios: String) {
@@ -53,6 +53,24 @@ export function subscribeStatus(
     const unsub = onSnapshot(doc(db, "pembeli", pembeliId as string), (doc) => {
       const status = (doc.data() as { status: String }).status;
       callback(status);
+    });
+  }
+}
+export async function subscribeAntrian(
+  callback: Dispatch<SetStateAction<String | undefined>>
+) {
+  const pembeli = getCurrentPembeli();
+  const penjual = await getPenjualById(pembeli.penjualId!);
+  if (penjual.pesanan) {
+    const unsub = onSnapshot(collection(db, "pembeli"), (doc) => {
+      const antrian = [];
+      doc.forEach((sDoc) => {
+        const pesanan: Pembeli = sDoc.data() as unknown as Pembeli;
+        if (pesanan.penjualId === penjual.getId()) {
+          if (pesanan.status === "Wait") antrian.push(pesanan.penjualId);
+        }
+      });
+      callback(antrian.length.toString());
     });
   }
 }
