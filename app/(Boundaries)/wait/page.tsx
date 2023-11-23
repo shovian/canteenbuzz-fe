@@ -8,7 +8,6 @@ import {
 import { useEffect, useState } from "react";
 import { Howl } from "howler";
 import Script from "next/script";
-import { useBeforeunload } from "react-beforeunload";
 import { redirectMainPage } from "@/app/(Controls)/KantinHandler/handler";
 import { useRouter } from "next/navigation";
 const HalamanTunggu = () => {
@@ -50,7 +49,7 @@ const HalamanTunggu = () => {
       <div>{navigator.vibrate.toString()}</div>
       <div>
         Kamu akan melewatkan notifikasi jika halaman ini tertutup, gunakan
-        tombol 'Home' jika ingin meninggalkan browser.
+        tombol Home jika ingin meninggalkan browser.
       </div>
     </div>
   ) : (
