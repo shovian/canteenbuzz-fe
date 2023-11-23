@@ -19,12 +19,10 @@ const HalamanLogin = () => {
   const [loadPage, setLoadPage] = useState(false);
 
   useEffect(() => {
-    getCurrentPembeli().getNama()
-      ? () => {
-          getCurrentPembeli().setStatus("Done");
-          redirectTunggu(router);
-        }
-      : {};
+    if (getCurrentPembeli().getNama()) {
+      getCurrentPembeli().setStatus("Done");
+      redirectTunggu(router);
+    }
     setErrorElement(undefined);
     isPenjualLoggedAndAvailable().then((isLoggedAndAvailable) => {
       if (isLoggedAndAvailable) {
