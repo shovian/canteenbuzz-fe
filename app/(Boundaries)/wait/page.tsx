@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { Howl } from "howler";
 import Script from "next/script";
+import { useBeforeunload } from "react-beforeunload";
 import { redirectMainPage } from "@/app/(Controls)/KantinHandler/handler";
 import { useRouter } from "next/navigation";
 const HalamanTunggu = () => {
@@ -18,7 +19,6 @@ const HalamanTunggu = () => {
     subscribePushNotification();
     subscribeStatus(setStatus);
   }, []);
-
   useEffect(() => {
     if (status === "Ready") {
       var sound = new Howl({
@@ -27,7 +27,7 @@ const HalamanTunggu = () => {
         loop: true,
       });
       sound.play();
-      navigator.vibrate(200);
+      window.navigator.vibrate(2000);
     } else if (status === "Done") {
       getCurrentPembeli()
         .setStatus("Done")
@@ -47,6 +47,11 @@ const HalamanTunggu = () => {
       <div>Makananmu Sedang Disiapkan!</div>
       <div>Antrian sekarang:</div>
       <div>05</div>
+      <div>{navigator.vibrate.toString()}</div>
+      <div>
+        Kamu akan melewatkan notifikasi jika halaman ini tertutup, gunakan
+        tombol 'Home' jika ingin meninggalkan browser.
+      </div>
     </div>
   ) : (
     <div>Page is loading</div>

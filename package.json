@@ -17,6 +17,7 @@
     "nextjs-current-url": "^1.0.3",
     "qrcode-generator": "^1.4.4",
     "react": "^18",
+    "react-beforeunload": "^2.6.0",
     "react-dom": "^18",
     "react-onesignal": "^3.0.1",
     "react-router-dom": "^6.19.0"
@@ -25,6 +26,7 @@
     "@types/howler": "^2.2.11",
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-beforeunload": "^2.1.4",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
