@@ -31,7 +31,11 @@ const HalamanTunggu = () => {
         loop: true,
       });
       sound.play();
-      window.navigator.vibrate && window.navigator.vibrate(20000);
+      typeof window !== "undefined"
+        ? window.navigator.vibrate
+          ? window.navigator.vibrate(20000)
+          : {}
+        : {};
     }
   }, [status]);
 
