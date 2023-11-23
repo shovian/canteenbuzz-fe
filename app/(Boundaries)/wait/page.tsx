@@ -26,7 +26,7 @@ const HalamanTunggu = () => {
         loop: true,
       });
       sound.play();
-      window.navigator.vibrate(2000);
+      window.navigator.vibrate && window.navigator.vibrate(2000);
     } else if (status === "Done") {
       getCurrentPembeli()
         .setStatus("Done")
