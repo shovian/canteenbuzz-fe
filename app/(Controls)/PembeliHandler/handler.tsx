@@ -48,11 +48,13 @@ export async function assignNama(
 export function subscribeStatus(
   callback: Dispatch<SetStateAction<String | undefined>>
 ) {
-  const pembeli: Pembeli = getCurrentPembeli();
-  const unsub = onSnapshot(doc(db, "pembeli", pembeli.id as string), (doc) => {
-    const status = (doc.data() as { status: String }).status;
-    callback(status);
-  });
+  const pembeliId = getCurrentPembeli().id;
+  if (pembeliId) {
+    const unsub = onSnapshot(doc(db, "pembeli", pembeliId as string), (doc) => {
+      const status = (doc.data() as { status: String }).status;
+      callback(status);
+    });
+  }
 }
 export function redirectTunggu(router: AppRouterInstance) {
   router.push("/wait");
