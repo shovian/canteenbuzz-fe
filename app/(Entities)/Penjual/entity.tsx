@@ -11,6 +11,7 @@ import {
   getDocs,
   getFirestore,
   setDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { Pembeli } from "../Pembeli/entity";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -116,39 +117,23 @@ export class Penjual implements TPenjual {
   getCode(): String | undefined {
     return this.code;
   }
-
   getPesanan(): Pembeli[] {
     return this.pesanan || [];
   }
+  // getPesanan(): Pembeli[] {
+  //   //theres something to do with this
+  //   const fetchedPembeli: Pembeli[] = [];
+  //   this.pesanan?.forEach((pembeli) => {
+  //     const tempTimestamp = pembeli.waktu as unknown as Timestamp;
+  //     pembeli.getWaktu()
+  //       ? fetchedPembeli.push(pembeli)
+  //       : fetchedPembeli.push(
+  //           new Pembeli({
+  //             ...pembeli,
+  //             waktu: tempTimestamp.toDate(),
+  //           } as Pembeli)
+  //         );
+  //   });
+  //   return fetchedPembeli;
+  // }
 }
-// export async function getPesanan(penjualId: String) {
-//   var res = false;
-//   const docSnap = collection(db, "kantin");
-//   const kantin = await getDocs(
-//     query(docSnap, where("penjualId", "==", penjualId), limit(1))
-//   );
-
-//   if (!kantin.empty) {
-//     const pembeli = await getDocs(
-//       query(
-//         collection(db, "pembeli"),
-//         where("kantinId", "==", kantin.docs[0].id),
-//         orderBy("waktu", "desc")
-//       )
-//     );
-//     return pembeli;
-//   }
-
-//   return null;
-// }
-
-// export async function setKios(id: String, kios: String) {
-//   var res = false;
-//   const kiosRef = doc(db, "kantin", "" + id);
-
-//   const update = await updateDoc(kiosRef, {
-//     namaKios: kios,
-//   });
-
-//   return update;
-// }

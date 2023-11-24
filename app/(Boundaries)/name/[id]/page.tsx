@@ -19,6 +19,7 @@ const HalamanFormPengisianNama = () => {
       </div>
       <div className="h-3/4 flex flex-col items-center justify-center">
         <form
+          className="flex flex-col"
           onSubmit={(e: any) => {
             e.preventDefault();
             submitNama(e.target.nama.value);

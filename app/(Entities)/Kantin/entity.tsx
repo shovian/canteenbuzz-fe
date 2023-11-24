@@ -8,6 +8,7 @@ import {
   getDocs,
   getFirestore,
   doc,
+  Timestamp,
 } from "firebase/firestore";
 import { Penjual } from "../Penjual/entity";
 import { Pembeli } from "../Pembeli/entity";
@@ -52,7 +53,13 @@ export class Kantin implements TKantin {
         id: docPembeli.id,
         ...docPembeli.data(),
       } as unknown as Pembeli;
-      fetchedPesanan.push(tempPembeli);
+      const tempTimestamp = tempPembeli.waktu as unknown as Timestamp;
+      const pembeli: Pembeli = new Pembeli({
+        ...tempPembeli,
+        waktu: tempTimestamp.toDate(),
+      } as Pembeli);
+
+      fetchedPesanan.push(pembeli);
     });
     resPenjual.forEach((doc) => {
       const tempPenjual = {

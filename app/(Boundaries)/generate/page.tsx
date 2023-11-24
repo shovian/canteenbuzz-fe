@@ -44,7 +44,7 @@ function HalamanGenerasiURLdanQRcode() {
       </div>
       {isNamaKiosInputted ? (
         <div className="h-3/4 white flex flex-col items-center justify-center">
-          {image && <img width={80} height={80} src={image.src}></img>}
+          {image && <img width={200} height={200} src={image.src}></img>}
           <input value={URL as string} readOnly></input>
           <div>
             {image && (

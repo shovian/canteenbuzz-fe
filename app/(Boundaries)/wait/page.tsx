@@ -13,7 +13,13 @@ const HalamanTunggu = () => {
   const [status, setStatus] = useState<String>();
   const [antrian, setAntrian] = useState<String>();
   const [pesananSelesai, setPesananSelesai] = useState(false);
+  const sound = new Howl({
+    src: ["/music/notif.mp3"],
+    volume: 1,
+    loop: true,
+  });
   useEffect(() => {
+    Howler.stop();
     subscribePushNotification();
     subscribeAntrian(setAntrian);
     subscribeStatus(setStatus);
@@ -21,15 +27,13 @@ const HalamanTunggu = () => {
       setPesananSelesai(true);
       removeCurrentPembeli();
     }
-    console.log(status, pesananSelesai);
   }, []);
   useEffect(() => {
-    if (status === "Ready") {
-      var sound = new Howl({
-        src: ["/music/notif.mp3"],
-        volume: 0.5,
-        loop: true,
-      });
+    if (status === "Done") {
+      Howler.stop();
+      removeCurrentPembeli();
+      setPesananSelesai(true);
+    } else if (status === "Ready") {
       sound.play();
       typeof window !== "undefined"
         ? window.navigator.vibrate
@@ -39,7 +43,7 @@ const HalamanTunggu = () => {
     }
   }, [status]);
 
-  return status !== undefined ? (
+  return status === "Wait" || status === "Ready" ? (
     <div className="h-screen w-screen flex flex-col items-center justify-center">
       <Script
         defer
@@ -53,6 +57,10 @@ const HalamanTunggu = () => {
           "Kamu akan melewatkan notifikasi jika halaman ini tertutup, gunakan tombol Home jika ingin meninggalkan browser."
         }
       </div>
+    </div>
+  ) : pesananSelesai ? (
+    <div className="w-screen h-screen flex items-center justify-center text-[32px]">
+      Selamat menikmati makananmu!
     </div>
   ) : (
     <div>Page is Loading</div>

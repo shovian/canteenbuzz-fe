@@ -4,11 +4,12 @@ import { getPenjualById, getPenjualByKios } from "../KantinHandler/handler";
 import { Penjual, db } from "@/app/(Entities)/Penjual/entity";
 import { addPesanan } from "../PenjualHandler/handler";
 import { Dispatch, SetStateAction } from "react";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { Timestamp, collection, doc, onSnapshot } from "firebase/firestore";
 import OneSignal from "react-onesignal";
 
 export async function getPembeliByNamaAndKios(nama: String, kios: String) {
   const penjual: Penjual = await getPenjualByKios(kios);
+
   const pembeli = penjual.getPesanan().filter((node) => {
     return node.nama === nama;
   });
@@ -63,14 +64,35 @@ export async function subscribeAntrian(
   const penjual = await getPenjualById(pembeli.penjualId!);
   if (penjual.pesanan) {
     const unsub = onSnapshot(collection(db, "pembeli"), (doc) => {
-      const antrian = [];
+      const antrian: Pembeli[] = [];
+      var currentPesananKey: number = 0;
       doc.forEach((sDoc) => {
-        const pesanan: Pembeli = sDoc.data() as unknown as Pembeli;
+        const pesanan: Pembeli = {
+          id: sDoc.id,
+          ...sDoc.data(),
+        } as unknown as Pembeli;
         if (pesanan.penjualId === penjual.getId()) {
-          if (pesanan.status === "Wait") antrian.push(pesanan.penjualId);
+          if (pesanan.status === "Wait")
+            antrian.push(
+              new Pembeli({
+                ...pesanan,
+                waktu: (pesanan.waktu as unknown as Timestamp).toDate(),
+              } as Pembeli)
+            );
         }
+        antrian.sort(function (a, b) {
+          // Turn your strings into dates, and then subtract them
+          // to get a value that is either negative, positive, or zero.
+          const aTime = new Date(a.getWaktu()).getTime();
+          const bTime = new Date(b.getWaktu()).getTime();
+          return aTime - bTime;
+        });
+
+        antrian.forEach((pembeli, key) => {
+          if (getCurrentPembeli().id === pembeli.id) currentPesananKey = key;
+        });
       });
-      callback(antrian.length.toString());
+      callback(currentPesananKey.toString());
     });
   }
 }

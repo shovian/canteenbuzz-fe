@@ -6,6 +6,7 @@ import {
 } from "../KantinHandler/handler";
 import { Penjual, db } from "@/app/(Entities)/Penjual/entity";
 import {
+  Timestamp,
   collection,
   doc,
   getDocs,
@@ -40,13 +41,15 @@ export async function notifyPembeli(nama: String) {
       },
     }),
   };
-
   pembeli.getStatus() === "Wait"
     ? fetch("https://onesignal.com/api/v1/notifications", options)
         .then((response) => response.json())
         .then((response) => {
           console.log(response);
           pembeli.setStatus("Ready");
+          setTimeout(() => {
+            pembeli.setStatus("Done");
+          }, 20000);
         })
         .catch((err) => console.error(err))
     : {};
@@ -161,12 +164,30 @@ export function subscribePesanan(
 ) {
   const penjual = getCurrentPenjual();
   const unsub = onSnapshot(collection(db, "pembeli"), (doc) => {
+    const fetchedPembeli: Pembeli[] = [];
     const fetchedPesanan: String[] = [];
     doc.docs.forEach((data) => {
       const pesanan = { id: data.id, ...data.data() } as unknown as Pembeli;
       if (pesanan.penjualId === penjual!.id && pesanan.status !== "Done")
-        fetchedPesanan.push(pesanan.nama!);
+        fetchedPembeli.push(
+          new Pembeli({
+            ...pesanan,
+            waktu: (pesanan.waktu as unknown as Timestamp).toDate(),
+          } as Pembeli)
+        );
     });
+    fetchedPembeli.sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      const aTime = new Date(a.getWaktu()).getTime();
+      const bTime = new Date(b.getWaktu()).getTime();
+
+      return aTime - bTime;
+    });
+    fetchedPembeli.forEach((pembeli) => {
+      fetchedPesanan.push(pembeli.nama!);
+    });
+
     callback(fetchedPesanan);
   });
 }
@@ -186,7 +207,7 @@ export function generateQRURL(code: String) {
   const qr = qrcode(4, "L");
   qr.addData(pathname);
   qr.make();
-  const imgString = qr.createImgTag();
+  const imgString = qr.createImgTag(10);
   const imgObj = new Image();
   imgObj.src = imgString.split('"')[1];
 

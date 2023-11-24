@@ -1,17 +1,11 @@
 import { initializeApp } from "firebase/app";
 import {
   collection,
-  query,
-  where,
-  orderBy,
-  limit,
   doc,
-  updateDoc,
-  getDoc,
-  getDocs,
   getFirestore,
   setDoc,
   addDoc,
+  Timestamp,
 } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -58,22 +52,23 @@ export class Pembeli implements TPembeli {
 
   static async build(nama: String) {
     const pembeliRef = collection(db, "pembeli");
+    const currentDate = new Date();
     const pembeliRes = await addDoc(pembeliRef, {
       nama: nama,
-      waktu: new Date(),
+      waktu: currentDate,
       status: "Wait",
     });
     const newPembeli: Pembeli = {
       id: pembeliRes.id,
       nama: nama,
-      waktu: new Date(),
+      waktu: currentDate,
       status: "Wait",
     } as unknown as Pembeli;
 
     return new Pembeli(newPembeli);
   }
-  getWaktu(): Date | undefined {
-    return this.waktu;
+  getWaktu(): Date {
+    return this.waktu || new Date();
   }
 
   setWaktu(waktu: Date): void {
