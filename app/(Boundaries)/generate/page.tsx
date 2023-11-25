@@ -11,6 +11,7 @@ function HalamanGenerasiURLdanQRcode() {
   const [isNamaKiosInputted, setIsNamaKiosInputted] = useState<boolean>(false);
   const [URL, setURL] = useState<String>("");
   const [image, setImage] = useState<HTMLImageElement>();
+  const [errorElement, setErrorElement] = useState<ReactElement>();
   useEffect(() => {
     setIsNamaKiosInputted(true);
   }, [URL]);
@@ -24,8 +25,7 @@ function HalamanGenerasiURLdanQRcode() {
   }, []);
   const onPressGenerate = (kios: String) => {
     assignNamaKios(kios);
-    const code = kios;
-    const generatedData = generateQRURL(code);
+    const generatedData = generateQRURL(kios);
     setURL(generatedData.data.URL);
     setImage(generatedData.data.QR);
   };
@@ -34,7 +34,13 @@ function HalamanGenerasiURLdanQRcode() {
     return page;
   };
   const downloadQR = (fileType: String) => {
-    const fileURL = convertToFile(image ? image : new Image());
+    var fileURL;
+    try {
+      fileURL = convertToFile(image ? image : new Image());
+    } catch (error) {
+      setErrorElement(createErrorElement("QR dan Url gagal diunduh"));
+    }
+
     return fileURL;
     //if fetch data failed please make error element
   };
@@ -56,6 +62,7 @@ function HalamanGenerasiURLdanQRcode() {
               </button>
             )}
           </div>
+          {errorElement}
         </div>
       ) : (
         <div className="h-3/4 flex flex-col items-center justify-center">
