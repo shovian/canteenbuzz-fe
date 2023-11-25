@@ -1,11 +1,13 @@
 "use client";
-import { redirectMainPage } from "@/app/(Controls)/KantinHandler/handler";
+import {
+  isPenjualAvailableByCredentials,
+  redirectMainPage,
+} from "@/app/(Controls)/KantinHandler/handler";
 import {
   getCurrentPembeli,
   redirectTunggu,
 } from "@/app/(Controls)/PembeliHandler/handler";
 import {
-  isPenjualAvailable,
   isPenjualLoggedAndAvailable,
   removeLoggedPenjual,
   setLoggedPenjualByCredentials,
@@ -41,12 +43,15 @@ const HalamanLogin = () => {
   };
   const submitLogin = (username: String, password: String) => {
     if (isFormComplete(username, password)) {
-      isPenjualAvailable(username, password).then((isAvailable) => {
-        if (isAvailable === true) {
-          setLoggedPenjualByCredentials(username, password);
-          redirectMainPage(router);
-        } else createErrorElement("Username atau password salah");
-      });
+      isPenjualAvailableByCredentials(username, password).then(
+        (isAvailable) => {
+          if (isAvailable === true) {
+            setLoggedPenjualByCredentials(username, password).then(() => {
+              redirectMainPage(router);
+            });
+          } else createErrorElement("Username atau password salah");
+        }
+      );
     } else {
       createErrorElement("username dan/atau password tidak boleh kosong");
     }

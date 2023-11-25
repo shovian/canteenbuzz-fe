@@ -1,15 +1,31 @@
 "use client";
+import { isPenjualAvailableByKios } from "@/app/(Controls)/KantinHandler/handler";
 import { assignNama } from "@/app/(Controls)/PembeliHandler/handler";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const HalamanFormPengisianNama = () => {
   const router = useRouter();
-  const kios = useParams().id;
+  const kios = useParams().id as String;
+  const [isValidKios, setIsValidKios] = useState(false);
+
+  function createErrorElement(message: string) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center">
+        {message}
+      </div>
+    );
+  }
   function submitNama(nama: String) {
     assignNama(nama, kios as string, router);
     // redirectTunggu(router);
   }
-  return (
+  useEffect(() => {
+    isPenjualAvailableByKios(kios).then((valid) => {
+      setIsValidKios(valid);
+    });
+  }, []);
+  return isValidKios ? (
     <div className="h-screen w-screen ">
       <div className="h-1/4 bg-sky-800 text-white flex flex-col items-center justify-center">
         <div>Masukkan Namamu</div>
@@ -30,6 +46,8 @@ const HalamanFormPengisianNama = () => {
         </form>
       </div>
     </div>
+  ) : (
+    createErrorElement("kios tidak tersedia")
   );
 };
 export default HalamanFormPengisianNama;

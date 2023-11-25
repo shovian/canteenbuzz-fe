@@ -1,8 +1,8 @@
 import qrcode from "qrcode-generator";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {
-  getPenjualByCredentials,
   getPenjualByKios,
+  isPenjualAvailableByCredentials,
 } from "../KantinHandler/handler";
 import { Penjual, TPenjual, db } from "@/app/(Entities)/Penjual/entity";
 import {
@@ -14,8 +14,8 @@ import {
   where,
 } from "firebase/firestore";
 import { Pembeli, TPembeli } from "@/app/(Entities)/Pembeli/entity";
-import { Dispatch, SetStateAction } from "react";
 import { getPembeliByNamaAndKios } from "../PembeliHandler/handler";
+import { Kantin } from "@/app/(Entities)/Kantin/entity";
 
 export async function notifyPembeli(nama: String) {
   const penjual = getCurrentPenjual();
@@ -60,24 +60,22 @@ export async function addPesanan(nama: String, kios: String) {
     penjual.setPesanan([...penjual.getPesanan(), pembeli]);
   }
 }
-export async function isPenjualAvailable(username: String, password: String) {
-  const penjual = await getPenjualByCredentials(username, password);
-  return penjual === undefined ? false : true;
-}
+
 export async function isPenjualLoggedAndAvailable() {
   if (isPenjualLogged()) {
     const username = getCurrentPenjualUsername();
     const password = getCurrentPenjualPassword();
 
-    return await isPenjualAvailable(username || "", password || "").then(
-      (isAvailable) => {
-        if (isAvailable) {
-          return true;
-        } else {
-          return false;
-        }
+    return await isPenjualAvailableByCredentials(
+      username || "",
+      password || ""
+    ).then((isAvailable) => {
+      if (isAvailable) {
+        return true;
+      } else {
+        return false;
       }
-    );
+    });
   } else return false;
 }
 export async function getPesananByNama(name: String) {
@@ -129,13 +127,13 @@ export function setLoggedPenjual(penjual: Penjual | undefined) {
     ? localStorage.setItem("penjual", JSON.stringify(penjual))
     : null;
 }
-export function setLoggedPenjualByCredentials(
+export async function setLoggedPenjualByCredentials(
   username: String,
   password: String
 ) {
-  getPenjualByCredentials(username, password).then((penjual) => {
-    setLoggedPenjual(penjual);
-  });
+  setLoggedPenjual(
+    (await Kantin.build()).getPenjualByCredentials(username, password)
+  );
 }
 export function updateCurrentPenjual(penjual: Penjual) {
   removeLoggedPenjual();
