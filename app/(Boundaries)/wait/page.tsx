@@ -1,6 +1,5 @@
 "use client";
 import {
-  getCurrentPembeli,
   removeCurrentPembeli,
   subscribeAntrian,
   subscribePushNotification,
@@ -12,7 +11,7 @@ import Script from "next/script";
 const HalamanTunggu = () => {
   const [status, setStatus] = useState<String>();
   const [antrian, setAntrian] = useState<String>();
-  const [pesananSelesai, setPesananSelesai] = useState(false);
+  const [isPesananSelesai, setIsPesananSelesai] = useState(false);
   const sound = new Howl({
     src: ["/music/notif.mp3"],
     volume: 1,
@@ -24,7 +23,7 @@ const HalamanTunggu = () => {
     subscribeAntrian(setAntrian);
     subscribeStatus(setStatus);
     if (status === "Done") {
-      setPesananSelesai(true);
+      setIsPesananSelesai(true);
       removeCurrentPembeli();
     }
   }, []);
@@ -32,7 +31,7 @@ const HalamanTunggu = () => {
     if (status === "Done") {
       Howler.stop();
       removeCurrentPembeli();
-      setPesananSelesai(true);
+      setIsPesananSelesai(true);
     } else if (status === "Ready") {
       sound.play();
       typeof window !== "undefined"
@@ -58,7 +57,7 @@ const HalamanTunggu = () => {
         }
       </div>
     </div>
-  ) : pesananSelesai ? (
+  ) : isPesananSelesai ? (
     <div className="w-screen h-screen flex items-center justify-center text-[32px]">
       Selamat menikmati makananmu!
     </div>

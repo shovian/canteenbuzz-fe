@@ -4,20 +4,18 @@ import {
   getPenjualByCredentials,
   getPenjualByKios,
 } from "../KantinHandler/handler";
-import { Penjual, db } from "@/app/(Entities)/Penjual/entity";
+import { Penjual, TPenjual, db } from "@/app/(Entities)/Penjual/entity";
 import {
   Timestamp,
   collection,
-  doc,
   getDocs,
   onSnapshot,
   query,
   where,
 } from "firebase/firestore";
-import { Pembeli } from "@/app/(Entities)/Pembeli/entity";
+import { Pembeli, TPembeli } from "@/app/(Entities)/Pembeli/entity";
 import { Dispatch, SetStateAction } from "react";
 import { getPembeliByNamaAndKios } from "../PembeliHandler/handler";
-import OneSignal from "react-onesignal";
 
 export async function notifyPembeli(nama: String) {
   const penjual = getCurrentPenjual();
@@ -35,7 +33,7 @@ export async function notifyPembeli(nama: String) {
     },
     body: JSON.stringify({
       app_id: "38b65b98-e456-48ea-9ea8-a62643db0e26",
-      include_subscription_ids: [pembeli.token],
+      include_subscription_ids: [pembeli.getToken()],
       contents: {
         en: "Pesanan Kamu sudah selesai!",
       },
@@ -57,7 +55,7 @@ export async function notifyPembeli(nama: String) {
 export async function addPesanan(nama: String, kios: String) {
   const penjual = await getPenjualByKios(kios);
   const pembeli = await Pembeli.build(nama);
-  pembeli.setPenjualId(penjual?.id);
+  pembeli.setPenjualId(penjual?.getId());
   if (penjual) {
     penjual.setPesanan([...penjual.getPesanan(), pembeli]);
   }
@@ -92,7 +90,7 @@ export async function getPesananByNama(name: String) {
   const currentPenjual = getCurrentPenjual();
   resPembeli.forEach((doc) => {
     const data = doc.data() as Pembeli;
-    if (currentPenjual!.id === data.penjualId) {
+    if (currentPenjual!.getId() === data.getPenjualId()) {
       pesanan.push(data);
     }
   });
@@ -102,8 +100,17 @@ export async function getPesananByNama(name: String) {
 export function getCurrentPenjual() {
   const penjualString =
     typeof window !== "undefined" ? localStorage.getItem("penjual") : "";
-  const penjual: Penjual = penjualString ? JSON.parse(penjualString) : null;
-  return new Penjual(penjual);
+  const penjual: TPenjual = penjualString
+    ? JSON.parse(penjualString)
+    : new Penjual(undefined, undefined, undefined, undefined, undefined);
+  return new Penjual(
+    penjual.id,
+    penjual.kantinId,
+    penjual.kios,
+    penjual.username,
+    penjual.password,
+    penjual.pesanan
+  );
 }
 export function getCurrentPenjualNamaKios() {
   const penjual = getCurrentPenjual();
@@ -152,28 +159,30 @@ export function isNamaKiosAvailable() {
   return namaKios;
 }
 export function assignNamaKios(kios: String) {
-  const currentPenjual = getCurrentPenjual();
-  const penjual = new Penjual(currentPenjual!);
-  if (penjual) {
+  const penjual = getCurrentPenjual();
+
+  if (penjual.getId() != "") {
     penjual.setKios(kios);
     updateCurrentPenjual(penjual);
   }
 }
-export function subscribePesanan(
-  callback: Dispatch<SetStateAction<String[] | undefined>>
-) {
+export function subscribePesanan(callback: (stringArr: String[]) => void) {
   const penjual = getCurrentPenjual();
   const unsub = onSnapshot(collection(db, "pembeli"), (doc) => {
     const fetchedPembeli: Pembeli[] = [];
     const fetchedPesanan: String[] = [];
     doc.docs.forEach((data) => {
-      const pesanan = { id: data.id, ...data.data() } as unknown as Pembeli;
-      if (pesanan.penjualId === penjual!.id && pesanan.status !== "Done")
+      const pesanan: TPembeli = { id: data.id, ...data.data() };
+      if (pesanan.penjualId === penjual!.getId() && pesanan.status !== "Done")
         fetchedPembeli.push(
-          new Pembeli({
-            ...pesanan,
-            waktu: (pesanan.waktu as unknown as Timestamp).toDate(),
-          } as Pembeli)
+          new Pembeli(
+            pesanan.id,
+            pesanan.penjualId,
+            (pesanan.waktu as unknown as Timestamp).toDate(),
+            pesanan.status,
+            pesanan.nama,
+            pesanan.token
+          )
         );
     });
     fetchedPembeli.sort(function (a, b) {
@@ -185,7 +194,7 @@ export function subscribePesanan(
       return aTime - bTime;
     });
     fetchedPembeli.forEach((pembeli) => {
-      fetchedPesanan.push(pembeli.nama!);
+      fetchedPesanan.push(pembeli.getNama());
     });
 
     callback(fetchedPesanan);

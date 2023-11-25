@@ -41,13 +41,20 @@ export class Pembeli implements TPembeli {
   status: String | undefined;
   nama: String | undefined;
   token: String | undefined;
-  constructor(pembeli: Pembeli | undefined) {
-    this.id = pembeli?.id;
-    this.penjualId = pembeli?.penjualId;
-    this.waktu = pembeli?.waktu;
-    this.status = pembeli?.status;
-    this.nama = pembeli?.nama;
-    this.token = pembeli?.token;
+  constructor(
+    id: String | undefined,
+    penjualId: String | undefined,
+    waktu: Date | undefined,
+    status: String | undefined,
+    nama: String | undefined,
+    token: String | undefined
+  ) {
+    this.id = id;
+    this.penjualId = penjualId;
+    this.waktu = waktu;
+    this.status = status;
+    this.nama = nama;
+    this.token = token;
   }
 
   static async build(nama: String) {
@@ -58,14 +65,24 @@ export class Pembeli implements TPembeli {
       waktu: currentDate,
       status: "Wait",
     });
-    const newPembeli: Pembeli = {
+    const newPembeli = {
       id: pembeliRes.id,
       nama: nama,
       waktu: currentDate,
       status: "Wait",
-    } as unknown as Pembeli;
+    };
 
-    return new Pembeli(newPembeli);
+    return new Pembeli(
+      newPembeli.id,
+      undefined,
+      newPembeli.waktu,
+      newPembeli.status,
+      newPembeli.nama,
+      undefined
+    );
+  }
+  getId(): String {
+    return this.id || "";
   }
   getWaktu(): Date {
     return this.waktu || new Date();
@@ -75,8 +92,8 @@ export class Pembeli implements TPembeli {
     this.waktu = waktu;
   }
 
-  getStatus(): String | undefined {
-    return this.status;
+  getStatus(): String {
+    return this.status || "";
   }
 
   async setStatus(status: String) {
@@ -85,23 +102,26 @@ export class Pembeli implements TPembeli {
     await setDoc(refPembeli, { status: status }, { merge: true });
   }
 
-  getNama(): String | undefined {
-    return this.nama;
+  getNama(): String {
+    return this.nama || "";
   }
-
   setNama(nama: String): void {
     this.nama = nama;
   }
-
-  setPenjualId(id: String | undefined) {
+  async setPenjualId(id: String) {
     this.penjualId = id;
-
     const refPembeli = doc(db, "pembeli", this.id as string);
-    setDoc(refPembeli, { penjualId: id }, { merge: true });
+    await setDoc(refPembeli, { penjualId: id }, { merge: true });
   }
-  setToken(token: String | undefined) {
+  getPenjualId(): String {
+    return this.penjualId || "";
+  }
+  async setToken(token: String) {
     this.token = token;
     const refPembeli = doc(db, "pembeli", this.id as string);
-    setDoc(refPembeli, { token: token }, { merge: true });
+    await setDoc(refPembeli, { token: token }, { merge: true });
+  }
+  getToken(): String {
+    return this.token || "";
   }
 }

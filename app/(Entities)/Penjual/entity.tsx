@@ -39,7 +39,6 @@ export type TPenjual = {
   kios?: String;
   username?: String;
   password?: String;
-  code?: String;
   pesanan?: Pembeli[];
 };
 export class Penjual implements TPenjual {
@@ -48,17 +47,22 @@ export class Penjual implements TPenjual {
   kios?: String;
   username?: String;
   password?: String;
-  code?: String;
   pesanan?: Pembeli[];
 
-  constructor(penjual: Penjual | undefined) {
-    this.id = penjual?.id;
-    this.kantinId = penjual?.kantinId;
-    this.kios = penjual?.kios ? penjual.kios : undefined;
-    this.username = penjual?.username;
-    this.password = penjual?.password;
-    this.code = penjual?.code;
-    this.pesanan = penjual?.pesanan ? penjual.pesanan : [];
+  constructor(
+    id?: String,
+    kantinId?: String,
+    kios?: String,
+    username?: String,
+    password?: String,
+    pesanan?: Pembeli[]
+  ) {
+    this.id = id;
+    this.kantinId = kantinId;
+    this.kios = kios ? kios : undefined;
+    this.username = username;
+    this.password = password;
+    this.pesanan = pesanan ? pesanan : [];
   }
 
   setId(id: String): void {
@@ -86,37 +90,25 @@ export class Penjual implements TPenjual {
     this.password = password;
   }
 
-  setCode(code: String): void {
-    this.code = code;
-  }
-
   setPesanan(pesanan: Pembeli[]): void {
     this.pesanan = pesanan;
   }
 
-  getId(): String | undefined {
-    return this.id;
+  getId(): String {
+    return this.id || "";
+  }
+  getKios(): String {
+    return this.kios || "";
   }
 
-  getKantinId(): String | undefined {
-    return this.kantinId;
+  getUsername(): String {
+    return this.username || "";
   }
 
-  getKios(): String | undefined {
-    return this.kios;
+  getPassword(): String {
+    return this.password || "";
   }
 
-  getUsername(): String | undefined {
-    return this.username;
-  }
-
-  getPassword(): String | undefined {
-    return this.password;
-  }
-
-  getCode(): String | undefined {
-    return this.code;
-  }
   getPesanan(): Pembeli[] {
     return this.pesanan || [];
   }
