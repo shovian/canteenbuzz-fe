@@ -57,7 +57,7 @@ export class Kantin implements TKantin {
       const pembeli: Pembeli = new Pembeli(
         tempPembeli.id,
         tempPembeli.penjualId,
-        tempTimestamp.toDate(),
+        tempTimestamp ? tempTimestamp.toDate() : tempTimestamp,
         tempPembeli.status,
         tempPembeli.nama,
         tempPembeli.token
